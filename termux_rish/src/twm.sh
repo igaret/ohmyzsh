@@ -1,6 +1,15 @@
 #!/data/data/com.termux/files/usr/bin/sh
-LOGFILE="$HOME/.termux/twm.log"
-twm_usage() {
+LOGFILE="/storage/emulated/0/Logs/twm.log"
+twm_arg_parser() {
+if [ ! -z $1 ];then
+	if [ ! -z $2 ];then
+			rish -c "wm $1 $2"
+	else
+			rish -c "wm $1"
+	fi
+fi
+}
+twm_no_args() {
 	echo "usage:"
 	echo " twm [arg] [value]"
 	echo "		possible args:"
@@ -18,19 +27,8 @@ twm_usage() {
 	echo " 		twm density reset"
 	echo " "
 }
-twm_arg_parser() {
-if [ ! -z $1 ];then
-	if [ ! -z $2 ];then
-			rish -c "wm $1 $2"
-	else
-			rish -c "wm $1"
-	fi
-fi
-}
-twm_no_args() {
-	twm_usage
-}
-if [ "$1" == "help" ]; then
+if [ "$1" == "help" ] > /dev/null 2>&1 || [ "$1" == "-h" ] > /dev/null 2>&1 || [ "$1" == "--help" ] > /dev/null 2>&1 || [ "$1" == "/?" ] > /dev/null 2>&1; then
+	twm_no_args
 	rish -c "wm"
 else
 	echo $0 $@ >> $LOGFILE
