@@ -1,0 +1,33 @@
+#!/data/data/com.termux/files/usr/bin/sh
+if [ -z $FIRETV ]; then
+	echo auto finding target
+	target="$(/system/bin/ip neigh show | head -n 1 | grep -oE '(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.)?')1/24 "
+
+#(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]
+	echo "subnet: $target"
+	adb_targets="$(nmap -vvv -pT:5555 -n $target$suffix | grep -o 'Discovered open port 5555/tcp on.*' |  grep -oE '(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)')"
+	echo $adb_targets
+	for ip in $adb_targets; do
+		adb connect $ip
+	done
+else
+	adb_target=$FIRETV
+	adb connect $adb_target
+fi
+if [ -z $adb_targets ]; then
+	echo "no target"
+	sleep 1
+else
+	echo "targets aqcuired"
+	echo "pulling screencap(s)"
+	port=":5555"
+	dddd="$(date --rfc-3339=date)"
+	for ip in $adb_targets; do
+		adb -s $ip$port shell screencap -p /sdcard/screencap.png 2> /dev/null
+		adb -s $ip$port pull /sdcard/screencap.png 2> /dev/null
+		mv screencap.png /sdcard/$ip$dddd.png 2> /dev/null
+		/system/bin/am start --user 0 -a android.intent.action.VIEW -d content://nextapp.fx.FileProvider/storage/emulated/0/screencap.png -t image/png      Starting: Intent { act=android.intent.action.VIEW dat=content://nextapp.fx.FileProvider/storage/emulated/0/screencap.png typ=image/png \} 2> /dev/null
+		sleep 3
+	done
+clear
+fi

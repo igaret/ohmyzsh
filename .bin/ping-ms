@@ -1,0 +1,55 @@
+#!/data/data/com.termux/files/usr/bin/bash
+
+gip="(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)"
+suffix="ms"
+if [[ -z "$1" ]]; then
+	target="$(/system/bin/ip neigh show | head -n 1 | grep -oE $gip ) "
+	ping_ms="$(/system/bin/ping -W 1 -c 1 $target | grep -oE 'time=.*ms' | sed 's/time\=//' | sed 's/ ms//')"
+	if [[ -z $ping_ms ]]; then
+		echo "target unreachable"
+	else
+		echo "auto target: $target"
+		echo "$ping_ms$suffix"
+	fi
+elif [[ "$1" == "-s" && -z $2 ]]; then
+	target="$(/system/bin/ip neigh show | head -n 1 | grep -oE $gip ) "
+	ping_ms="$(/system/bin/ping -W 1 -c 1 $target | grep -oE 'time=.*ms' | sed 's/time\=//' | sed 's/ ms//')"
+	if [[ -z $ping_ms ]]; then
+		echo "target unreachable"
+	else
+		echo "$ping_ms"
+	fi
+elif [[ "$1" != "-s" && "$2" == "-s" ]]; then
+	target=$1
+	ping_ms="$(/system/bin/ping -W 1 -c 1 $target | grep -oE 'time=.*ms' | sed 's/time\=//' | sed 's/ ms//')"
+	if [[ -z $ping_ms ]]; then
+		echo "target unreachable"
+	else
+		echo "$ping_ms"
+	fi
+elif [[ "$1" == "-s" && "$2" != "-s" ]]; then
+	target=$2
+	ping_ms="$(/system/bin/ping -W 1 -c 1 $target | grep -oE 'time=.*ms' | sed 's/time\=//' | sed 's/ ms//')"
+	if [[ -z $ping_ms ]]; then
+		echo "target unreachable"
+	else
+		echo "$ping_ms"
+	fi
+else
+	target=$1
+	ping_ms="$(/system/bin/ping -W 1 -c 1 $target | grep -oE 'time=.*ms' | sed 's/time\=//' | sed 's/ ms//')"
+	if [[ -z $ping_ms ]]; then
+		echo "target unreachable"
+	else
+		echo "target: $target"
+		echo "$ping_ms$suffix"
+	fi
+fi
+
+
+
+
+
+
+
+
