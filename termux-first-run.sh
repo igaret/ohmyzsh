@@ -13,13 +13,19 @@ apt update > /dev/null 2>&1
 echo "setting up ZSH for [oh-my-zsh/oh-my-zsh]"
 curl -sL install.ohmyz.sh | bash > /dev/null 2>&1
 chsh zsh  > /dev/null 2>&1
-echo "setting up [igaret/termux_stuff] for custom [oh-my-zsh/oh-my-zsh]"
+echo "setting up [igaret/ohmyzsh] for custom [oh-my-zsh/oh-my-zsh]"
 #git clone https://github.com/igaret/termux_stuff $TMPDIR/termux-first-run > /dev/null 2>&1
-curl -sL https://raw.githubusercontent.com/igaret/termux_stuff/refs/heads/main/termux_oh-my-zsh/aliases > $HOME/.aliases  > /dev/null 2>&1
-curl -sL https://raw.githubusercontent.com/igaret/termux_stuff/refs/heads/main/termux_oh-my-zsh/zshrc > $HOME/.zshrc > /dev/null 2>&1
-curl -sL https://raw.githubusercontent.com/igaret/termux_stuff/refs/heads/main/termux_oh-my-zsh/aliases > $HOME/.oh-my-zsh/themes/garet.zsh-theme > /dev/null 2>&1
-curl -sL https://raw.githubusercontent.com/igaret/termux_stuff/refs/heads/main/install_rish.sh > $TMPDIR/install_rish.sh | bash > /dev/null 2>&1
+curl -sL https://raw.githubusercontent.com/igaret/shellconf/master/aliases > $HOME/.aliases > /dev/null 2>&1
+curl -sL https://raw.githubusercontent.com/igaret/shellconf/master/zshrc > $HOME/.zshrc > /dev/null 2>&1
+curl -sL https://raw.githubusercontent.com/igaret/shellconf/master/garet.zsh-theme > $HOME/.oh-my-zsh/themes/igaret.zsh-theme  > /dev/null 2>&1
 echo "done. exiting in 3 seconds ..."
+if [ "$SHELL" == "bash" ]; then
+    exec zsh
+elif [ "$SHELL" == "zsh" ]; then
+    omz reload
+else
+    zsh
+fi
 sleep 3  > /dev/null 2>&1
 exit
 
